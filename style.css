@@ -5,3 +5,20 @@
   justify-content: center;
   align-items: center;
 }
+
+#dirtBox{
+  width: 600px;
+  height: 600px;
+  background-color: rgb(127, 204, 51);
+  display: flew;
+  justify-content: center;
+  align-items: center;
+  border-radius: 30px;
+  border: 10px solid darkgreen;
+}
+
+.row{
+  width:100%;
+  display:flex;
+  justify-content: space-around;
+}
