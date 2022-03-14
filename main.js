@@ -15,9 +15,9 @@ function Game() {
   this.gameRunning = false;
   this.timer = new Timer(document.getElementById('timer'), this.defaultTimerLength);
   this.grid = new Grid(document.getElementById('grid'),
-      this.defaultGridRows, this.defaultGridColumns,
-      this.defaultSimultaneousMoles, this.defaultMoleVisibleTime,
-      this.defaultGridWidth, this.defaultGridHeight);
+    this.defaultGridRows, this.defaultGridColumns,
+    this.defaultSimultaneousMoles, this.defaultMoleVisibleTime,
+    this.defaultGridWidth, this.defaultGridHeight);
   this.score = new Score(document.getElementById('score'));
   this.startButton = document.getElementById('start-game');
 
@@ -26,11 +26,11 @@ function Game() {
   this.grid.element.addEventListener('click', this.clickOnCell.bind(this));
   this.startButton.addEventListener('click', this.start.bind(this));
 }
-Game.prototype.resetStartButton = function() {
+Game.prototype.resetStartButton = function () {
   this.startButton.innerHTML = 'Start the game!';
 };
-Game.prototype.start = function() {
-  if(!this.gameRunning) {
+Game.prototype.start = function () {
+  if (!this.gameRunning) {
     this.startButton.innerHTML = 'Reset the game!';
     this.gameRunning = true;
     this.score.reset();
@@ -38,7 +38,7 @@ Game.prototype.start = function() {
 
     // launch timer with a callback to be executed at the end of the timer
     var that = this;
-    this.timer.start(function() {
+    this.timer.start(function () {
       that.gameRunning = false;
       that.grid.stopMoles();
       that.resetStartButton();
@@ -52,10 +52,10 @@ Game.prototype.start = function() {
     this.resetStartButton();
   }
 };
-Game.prototype.clickOnCell = function(event) {
+Game.prototype.clickOnCell = function (event) {
   var mole = this.grid.moles.indexOf(event.target);
-  if(~mole) {
-    event.target.style.backgroundColor = 'rgba(0, 0, 0, 0)';
+  if (~mole) {
+    event.target.style.backgroundImage = "url('bg.png')";
     this.grid.moles.splice(mole, 1);
     this.score.increment();
   }
@@ -74,7 +74,7 @@ function Grid(element, rows, columns, defaultSimultaneousMoles, defaultMoleVisib
   this.columns = columns;
   this.moles = [];
 }
-Grid.prototype.build = function() {
+Grid.prototype.build = function () {
   var table = document.createElement('table');
   for (var row = 0; row < this.rows; row++) {
     var tr = table.appendChild(document.createElement('tr'));
@@ -88,44 +88,47 @@ Grid.prototype.build = function() {
   }
   this.element.appendChild(table);
 };
-Grid.prototype.startMoles = function() {
+Grid.prototype.startMoles = function () {
   var that = this;
   this.generateMoles();
-  this.molesTimer = setInterval(function() {
+  this.molesTimer = setInterval(function () {
     that.cleanMoles();
     that.generateMoles();
   }, that.defaultMoleVisibleTime * 1000);
 };
-Grid.prototype.generateMoles = function() {
-  while(this.moles.length < this.defaultSimultaneousMoles) {
+Grid.prototype.generateMoles = function () {
+  while (this.moles.length < this.defaultSimultaneousMoles) {
     this.generateMole();
   }
 };
-Grid.prototype.generateMole = function() {
+Grid.prototype.generateMole = function () {
   var randomRow = Math.floor(Math.random() * this.rows).toString();
   var randomColumn = Math.floor(Math.random() * this.columns).toString();
 
   var rows = this.element.getElementsByTagName('tr');
-  for(var row = 0; row < rows.length; row++) {
+  for (var row = 0; row < rows.length; row++) {
     var columns = rows[row].children;
-    for(var column = 0; column < columns.length; column++) {
+    for (var column = 0; column < columns.length; column++) {
       var element = columns[column];
-      if(element.dataset.row === randomRow && element.dataset.column === randomColumn) {
-        if(!~this.moles.indexOf(element)) {
-          element.style.backgroundColor = 'lightblue';
+      if (element.dataset.row === randomRow && element.dataset.column === randomColumn) {
+        if (!~this.moles.indexOf(element)) {
+          element.style.backgroundImage = "url('bottletop.png')";
+          element.style.backgroundRepeat = "no-repeat";
+          // element.style.border = '15px solid white';
+          // element.style.borderRadius = '50%';
           this.moles.push(element);
         }
       }
     }
   }
 };
-Grid.prototype.cleanMoles = function() {
-  for(var i = 0; i < this.moles.length; i++) {
-    this.moles[i].style.backgroundColor = 'rgba(0, 0, 0, 0)';
+Grid.prototype.cleanMoles = function () {
+  for (var i = 0; i < this.moles.length; i++) {
+    this.moles[i].style.backgroundImage = "url('bg.png')";
   }
   this.moles = [];
 };
-Grid.prototype.stopMoles = function() {
+Grid.prototype.stopMoles = function () {
   window.clearInterval(this.molesTimer);
   this.cleanMoles();
 };
@@ -137,14 +140,14 @@ function Score(element) {
   this.score = 0;
   this.element = element;
 }
-Score.prototype.display = function() {
+Score.prototype.display = function () {
   this.element.innerHTML = this.score;
 };
-Score.prototype.reset = function() {
+Score.prototype.reset = function () {
   this.score = 0;
   this.element.innerHTML = '0';
 };
-Score.prototype.increment = function() {
+Score.prototype.increment = function () {
   this.score++;
   this.display();
 };
@@ -157,21 +160,21 @@ function Timer(element, defaultTimerLength) {
   this.defaultTimerLength = defaultTimerLength;
   this.display();
 }
-Timer.prototype.display = function(display) {
-  if(display !== undefined) {
-    this.element.innerHTML = display.toFixed(3);
+Timer.prototype.display = function (display) {
+  if (display !== undefined) {
+    this.element.innerHTML = display.toFixed(0);
   } else {
-    this.element.innerHTML = this.defaultTimerLength.toFixed(3);
+    this.element.innerHTML = this.defaultTimerLength.toFixed(0);
   }
 };
-Timer.prototype.start = function(callback) {
+Timer.prototype.start = function (callback) {
   var startDate = new Date();
   var that = this;
 
-  this.timerId = setInterval(function() {
+  this.timerId = setInterval(function () {
     var endDate = startDate.getTime() + that.defaultTimerLength * 1000;
     var diff = endDate - new Date();
-    if(diff > 0) {
+    if (diff > 0) {
       that.display(diff / 1000);
     } else {
       window.clearInterval(that.timerId);
@@ -180,11 +183,11 @@ Timer.prototype.start = function(callback) {
     }
   }, 66);
 };
-Timer.prototype.stop = function() {
+Timer.prototype.stop = function () {
   window.clearInterval(this.timerId);
   this.display();
 };
 
-window.onload = function() {
+window.onload = function () {
   var game = new Game();
 };
